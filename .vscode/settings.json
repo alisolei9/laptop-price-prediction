@@ -9,5 +9,7 @@
 
     "files.trimTrailingWhitespace": true,
 
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "python-envs.defaultEnvManager": "ms-python.python:venv",
+    "python-envs.defaultPackageManager": "ms-python.python:pip"
 }
