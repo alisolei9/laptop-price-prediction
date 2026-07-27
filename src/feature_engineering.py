@@ -166,3 +166,37 @@ def extract_cpu_family(cpu):
 
     return "Other"
 # //////////////////////////////////////////////
+
+def extract_gpu_family(gpu):
+    """
+    Extract GPU family from gpu_type.
+    """
+
+    gpu = gpu.lower()
+
+    if "gtx" in gpu:
+        return "GTX"
+
+    elif "mx" in gpu:
+        return "MX"
+
+    elif "quadro" in gpu:
+        return "Quadro"
+
+    elif "radeon" in gpu:
+        return "Radeon"
+
+    elif "firepro" in gpu:
+        return "FirePro"
+
+    elif "uhd graphics" in gpu:
+        return "UHD Graphics"
+
+    elif "hd graphics" in gpu:
+        return "HD Graphics"
+
+    elif "iris" in gpu:
+        return "Iris Graphics"
+
+    return "Other"
+# ///////////////////////////////////////////
