@@ -1,5 +1,5 @@
-import pandas as pd
 import re
+
 # ////////////////////////////////////////////
 def extract_capacity(text):
 
@@ -67,31 +67,6 @@ def extract_hybrid(text):
     return hybrid
 
 
-
-
-# /////////////////////////////////////
-def extract_resolution(text): # type: ignore
-    """
-    Extract screen resolution.
-
-    Parameters
-    ----------
-    text : str
-
-    Returns
-    -------
-    tuple
-        (width, height)
-    """
-
-    match = re.findall(r"\d+x\d+", text)
-
-    if len(match) == 0:
-        return None, None
-
-    width, height = match[0].split("x")
-
-    return int(width), int(height)
 
 # ///////////////////////////////////////////
 def extract_resolution(text):
@@ -200,3 +175,54 @@ def extract_gpu_family(gpu):
 
     return "Other"
 # ///////////////////////////////////////////
+
+
+def engineer_features(df):
+    """
+    Apply all feature engineering steps.
+    """
+
+    df = df.copy()
+
+    # Storage
+    df["ssd"] = df["memory"].apply(extract_ssd)
+    df["hdd"] = df["memory"].apply(extract_hdd)
+    df["flash_storage"] = df["memory"].apply(extract_flash_storage)
+    df["hybrid"] = df["memory"].apply(extract_hybrid)
+
+    # Screen Resolution
+    resolution = df["screen_resolution"].apply(extract_resolution)
+
+    df["resolution_width"] = resolution.apply(lambda x: x[0])
+    df["resolution_height"] = resolution.apply(lambda x: x[1])
+
+    df["ips_panel"] = df["screen_resolution"].apply(extract_ips)
+    df["touchscreen"] = df["screen_resolution"].apply(extract_touchscreen)
+
+    # CPU
+    df["cpu_family"] = df["cpu_type"].apply(extract_cpu_family)
+
+    # GPU
+    df["gpu_family"] = df["gpu_type"].apply(extract_gpu_family)
+
+    # PPI
+    pixel_diagonal = (
+        (
+            df["resolution_width"] ** 2
+            + df["resolution_height"] ** 2
+        ) ** 0.5
+    )
+
+    df["ppi"] = pixel_diagonal / df["inches"]
+
+    # Drop unused columns
+    df = df.drop(
+        columns=[
+            "memory",
+            "cpu_type",
+            "gpu_type",
+            "screen_resolution",
+        ]
+    )
+
+    return df
