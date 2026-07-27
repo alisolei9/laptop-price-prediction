@@ -135,3 +135,34 @@ def extract_touchscreen(text):
 
     return 0
 # /////////////////////////////////////////////
+
+def extract_cpu_family(cpu):
+    """
+    Extract CPU family from cpu_type.
+    """
+
+    cpu = cpu.lower()
+
+    if "core i7" in cpu:
+        return "Core i7"
+
+    elif "core i5" in cpu:
+        return "Core i5"
+
+    elif "core i3" in cpu:
+        return "Core i3"
+
+    elif "pentium" in cpu:
+        return "Pentium"
+
+    elif "celeron" in cpu:
+        return "Celeron"
+
+    elif "atom" in cpu:
+        return "Atom"
+
+    elif "amd" in cpu or "a-series" in cpu or "a9" in cpu or "ryzen" in cpu:
+        return "AMD"
+
+    return "Other"
+# //////////////////////////////////////////////
