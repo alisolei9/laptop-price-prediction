@@ -1,5 +1,5 @@
 import pandas as pd
-
+import re
 # ////////////////////////////////////////////
 def extract_capacity(text):
 
@@ -67,3 +67,71 @@ def extract_hybrid(text):
     return hybrid
 
 
+
+
+# /////////////////////////////////////
+def extract_resolution(text): # type: ignore
+    """
+    Extract screen resolution.
+
+    Parameters
+    ----------
+    text : str
+
+    Returns
+    -------
+    tuple
+        (width, height)
+    """
+
+    match = re.findall(r"\d+x\d+", text)
+
+    if len(match) == 0:
+        return None, None
+
+    width, height = match[0].split("x")
+
+    return int(width), int(height)
+
+# ///////////////////////////////////////////
+def extract_resolution(text):
+    """
+    Extract screen resolution.
+
+    Returns
+    -------
+    tuple
+        (width, height)
+    """
+
+    match = re.findall(r"\d+x\d+", text)
+
+    if len(match) == 0:
+        return None, None
+
+    width, height = match[0].split("x")
+
+    return int(width), int(height)
+# ////////////////////////////////////////////
+
+def extract_ips(text):
+    """
+    Return 1 if IPS Panel exists, otherwise 0.
+    """
+
+    if "IPS Panel" in text:
+        return 1
+
+    return 0
+# //////////////////////////////////////////////
+
+def extract_touchscreen(text):
+    """
+    Return 1 if Touchscreen exists, otherwise 0.
+    """
+
+    if "Touchscreen" in text:
+        return 1
+
+    return 0
+# /////////////////////////////////////////////
