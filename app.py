@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 
 # ---------- Constants ----------
@@ -81,6 +82,51 @@ YES_NO = [
     "Yes",
 ]
 
+CPU_COMPANIES = [
+    "Intel",
+    "AMD",
+    "Samsung",
+]
+
+CPU_FAMILIES = [
+    "Core i3",
+    "Core i5",
+    "Core i7",
+    "Core i9",
+    "Pentium",
+    "Celeron",
+    "Xeon",
+    "Ryzen 3",
+    "Ryzen 5",
+    "Ryzen 7",
+    "A-Series",
+]
+
+GPU_COMPANIES = [
+    "Intel",
+    "Nvidia",
+    "AMD",
+]
+
+GPU_FAMILIES = [
+    "HD Graphics",
+    "UHD Graphics",
+    "Iris Graphics",
+    "GeForce GTX",
+    "GeForce RTX",
+    "Quadro",
+    "Radeon RX",
+    "Radeon Pro",
+]
+
+HDD_OPTIONS = [
+    0,
+    128,
+    256,
+    500,
+    1000,
+    2000,
+]
 
 # ---------- Page ----------
 
@@ -155,6 +201,43 @@ st.sidebar.divider()
 
 st.sidebar.subheader("🖥 Display")
 
+st.sidebar.divider()
+
+st.sidebar.subheader("🧠 CPU")
+
+cpu_company = st.sidebar.selectbox(
+    "CPU Company",
+    CPU_COMPANIES,
+)
+
+cpu_family = st.sidebar.selectbox(
+    "CPU Family",
+    CPU_FAMILIES,
+)
+
+st.sidebar.divider()
+
+st.sidebar.subheader("🎮 GPU")
+
+gpu_company = st.sidebar.selectbox(
+    "GPU Company",
+    GPU_COMPANIES,
+)
+
+gpu_family = st.sidebar.selectbox(
+    "GPU Family",
+    GPU_FAMILIES,
+)
+
+st.sidebar.divider()
+
+st.sidebar.subheader("💾 Storage")
+
+hdd = st.sidebar.selectbox(
+    "HDD Storage (GB)",
+    HDD_OPTIONS,
+)
+
 screen_size = st.sidebar.selectbox(
     "Screen Size (inch)",
     SCREEN_SIZES,
@@ -164,6 +247,15 @@ resolution = st.sidebar.selectbox(
     "Resolution",
     RESOLUTIONS,
 )
+
+resolution_width = int(resolution.split("x")[0])
+
+resolution_height = int(resolution.split("x")[1])
+
+ppi = math.sqrt(
+    resolution_width**2 + resolution_height**2
+) / screen_size
+
 
 ips_panel = st.sidebar.selectbox(
     "IPS Panel",
@@ -194,21 +286,42 @@ with col1:
 
     st.metric("Screen Size", f"{screen_size} inch")
 
+    st.metric("CPU Company", cpu_company)
+
+    st.metric("CPU Family", cpu_family)
+
 with col2:
 
     st.metric("Operating System", operating_system)
 
     st.metric("SSD", f"{ssd} GB")
 
+    st.metric("HDD", f"{hdd} GB")
+
     st.metric("Weight", f"{weight} kg")
 
     st.metric("Resolution", resolution)
+    st.metric(
+    "Resolution Size",
+    f"{resolution_width} × {resolution_height}"
+)
+
+    st.metric(
+        "PPI",
+        f"{ppi:.2f}"
+)
 
     st.metric("IPS Panel", ips_panel)
 
     st.metric("Touchscreen", touchscreen)
 
+    st.metric("GPU Company", gpu_company)
+
+    st.metric("GPU Family", gpu_family)
+
 
 st.divider()
 
-st.caption("Created with ❤️ using Streamlit and Machine Learning")
+st.caption(
+    "Developed with Streamlit • CatBoost • Machine Learning ❤️"
+)
