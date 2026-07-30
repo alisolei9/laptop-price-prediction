@@ -1,5 +1,8 @@
 import streamlit as st
 import math
+import joblib
+import pandas as pd
+import os
 
 
 # ---------- Constants ----------
@@ -127,6 +130,30 @@ HDD_OPTIONS = [
     1000,
     2000,
 ]
+
+
+# ---------- Load Model ----------
+
+@st.cache_resource
+def load_model():
+
+    model = joblib.load("models/gradient_boosting_model.pkl")
+
+    columns = joblib.load("models/columns.pkl")
+
+    return model, columns
+
+
+model, columns = load_model()
+
+# ---------- Helper Function ----------
+
+def set_one_hot(feature_df, column_name):
+
+    if column_name in feature_df.columns:
+        feature_df.at[0, column_name] = 1
+
+
 
 # ---------- Page ----------
 
@@ -325,3 +352,142 @@ st.divider()
 st.caption(
     "Developed with Streamlit • CatBoost • Machine Learning ❤️"
 )
+
+# ---------- Prediction ----------
+
+st.divider()
+
+predict_button = st.button(
+    "🚀 Predict Laptop Price",
+    use_container_width=True,
+)
+
+if predict_button:
+
+    # ---------- User Input Dictionary ----------
+
+    user_input = {
+
+        "company": company,
+
+        "laptop_type": laptop_type,
+
+        "operating_system": operating_system,
+
+        "ram": ram,
+
+        "cpu_frequency": cpu_frequency,
+
+        "ssd": ssd,
+
+        "hdd": hdd,
+
+        "weight": weight,
+
+        "screen_size": screen_size,
+
+        "resolution": resolution,
+
+        "resolution_width": resolution_width,
+
+        "resolution_height": resolution_height,
+
+        "ppi": ppi,
+
+        "ips_panel": ips_panel,
+
+        "touchscreen": touchscreen,
+
+        "cpu_company": cpu_company,
+
+        "cpu_family": cpu_family,
+
+        "gpu_company": gpu_company,
+
+        "gpu_family": gpu_family,
+
+    }
+
+    st.success("Input received successfully!")
+
+    st.subheader("User Input")
+
+    st.json(user_input)
+
+    # ---------- Convert Dictionary To DataFrame ----------
+
+    input_df = pd.DataFrame([user_input])
+
+    st.subheader("Input DataFrame")
+
+    st.dataframe(input_df)
+
+    # ---------- Empty Feature Vector ----------
+
+    feature_df = pd.DataFrame(
+        0,
+        index=[0],
+        columns=columns,
+    )
+    # =====================================================
+    # Numerical Features
+    # =====================================================
+
+    feature_df["ram"] = ram
+    feature_df["cpu_frequency"] = cpu_frequency
+    feature_df["ssd"] = ssd
+    feature_df["hdd"] = hdd
+    feature_df["weight"] = weight
+
+    feature_df["inches"] = screen_size
+
+    feature_df["resolution_width"] = resolution_width
+    feature_df["resolution_height"] = resolution_height
+
+    feature_df["ppi"] = ppi
+
+    feature_df["flash_storage"] = 0
+    feature_df["hybrid"] = 0
+
+    # =====================================================
+    # One-Hot Encoding
+    # =====================================================
+
+    set_one_hot(feature_df, f"company_{company}")
+
+    set_one_hot(feature_df, f"type_name_{laptop_type}")
+
+    set_one_hot(feature_df, f"cpu_company_{cpu_company}")
+
+    set_one_hot(feature_df, f"cpu_family_{cpu_family}")
+
+    set_one_hot(feature_df, f"gpu_company_{gpu_company}")
+
+    set_one_hot(feature_df, f"gpu_family_{gpu_family}")
+
+    set_one_hot(feature_df, f"operating_system_{operating_system}")
+
+    # =====================================================
+    # Prediction
+    # =====================================================
+
+    prediction = model.predict(feature_df)[0]
+
+    # =====================================================
+    # Boolean Features
+    # =====================================================
+
+    feature_df["ips_panel"] = 1 if ips_panel == "Yes" else 0
+
+    feature_df["touchscreen"] = 1 if touchscreen == "Yes" else 0
+
+    st.subheader("Feature Vector")
+
+    st.dataframe(feature_df)
+
+
+    st.divider()
+
+    st.subheader("💰 Predicted Laptop Price")
+
+    st.success(f"${prediction:,.2f}")
